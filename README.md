@@ -48,11 +48,11 @@ LLM** drives the agent so scans are reproducible.
 
 ### 🐳 Option A — build an image and launch a container (recommended)
 
-From the repo root (the directory with the `Dockerfile`):
+From the repo root (the `Dockerfile` and app live in `backend/`):
 
 ```bash
 # 1. Build the image
-docker build -t vulnerable-ai-agent:latest .
+docker build -t vulnerable-ai-agent:latest ./backend
 
 # 2. Launch a container (bound to loopback only — keep it there)
 docker run -d --name vuln-agent -p 127.0.0.1:8080:8080 vulnerable-ai-agent:latest
@@ -76,6 +76,7 @@ docker compose down            # stop & remove
 ### 🐍 Option B — local Python (no Docker)
 
 ```bash
+cd backend
 pip install -r requirements.txt
 uvicorn app.main:app --host 0.0.0.0 --port 8080
 python scripts/smoke.py        # asserts all vuln behaviours fire (8/8)
@@ -216,6 +217,8 @@ Jinja2 · PyYAML · Requests/HTTPX · Docker + Docker Compose.
 ---
 
 ## 📂 Repo layout
+
+> Application code lives in `backend/` (the Docker build context: `docker build ./backend`). Docs and CI live at the repo root. Paths in the tree below are under `backend/`.
 
 ```
 app/

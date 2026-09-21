@@ -1,5 +1,7 @@
 # CHECKS.md — vulnerability → location → detection map
 
+> Source paths below are under `backend/` (e.g. `backend/app/llm.py`). The Docker build context is `backend/`.
+
 Every weakness in `vulnerable-ai-agent` is intentional. This file maps each one
 to where it lives, how to trigger it, and which framework it belongs to, so you
 can confirm TotalAI (or another scanner) raises the finding.

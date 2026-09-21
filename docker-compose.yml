@@ -1,7 +1,7 @@
 # Isolated-lab compose. Do not expose port 8080 beyond localhost.
 services:
   vuln-agent:
-    build: .
+    build: ./backend
     image: vulnerable-ai-agent:latest
     container_name: vulnerable-ai-agent
     ports:
