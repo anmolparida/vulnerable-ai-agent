@@ -13,11 +13,11 @@
 #      (Settings > Secrets and variables > Actions > New repository secret)
 #   2. Set QSCANNER_GATEWAY_URL below to match your Qualys account's gateway.
 
-name: QScanner Container Security Scan -- Code and Image Scan
+name: QScanner Container Security Scan -- Code and Image Scan.
 
 on:
   push:
-    branches: [ main, qscanner-github-repo-scan, qscanner-github-repo-scan-access-token ]
+    branches: [ main, github-actions-with-qulays-client-id-client-secret ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:   # adds a manual "Run workflow" button in the Actions tab
@@ -58,7 +58,8 @@ jobs:
         run: |
           ./linux-amd64/qscanner \
             --gateway-url "${{ env.QSCANNER_GATEWAY_URL }}" \
-            --access-token "$QUALYS_ACCESS_TOKEN" \
+            --client-id "$QUALYS_CLIENT_ID" \
+            --client-secret "$QUALYS_CLIENT_SECRET" \
             code "${{ github.workspace }}" \
             --scan-types sca,compliance \
             --compliance-benchmarks AI_NIST_RMF,AI_EU_ACT,AI_PCI_DSS \
