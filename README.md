@@ -27,14 +27,43 @@ The full check → file/line/endpoint → detection map is in **[`CHECKS.md`](CH
 
 ## Run it (isolated lab only)
 
-```bash
-# Option A — Docker (recommended)
-docker compose up --build -d        # serves on http://localhost:8080
+### Option A — build a Docker image and launch a container (recommended)
 
-# Option B — local Python
+From the repo root (the directory with the `Dockerfile`):
+
+```bash
+# 1. Build the image
+docker build -t vulnerable-ai-agent:latest .
+
+# 2. Launch a container (bound to loopback only — keep it there)
+docker run -d --name vuln-agent -p 127.0.0.1:8080:8080 vulnerable-ai-agent:latest
+
+# 3. Confirm it's up
+curl -s http://127.0.0.1:8080/health
+
+# --- manage the container ---
+docker logs -f vuln-agent      # follow logs
+docker stop vuln-agent         # stop
+docker rm vuln-agent           # remove
+```
+
+Or let Compose build + run in one step:
+
+```bash
+docker compose up --build -d   # serves on http://127.0.0.1:8080
+docker compose down            # stop & remove
+```
+
+### Option B — local Python (no Docker)
+
+```bash
 pip install -r requirements.txt
 uvicorn app.main:app --host 0.0.0.0 --port 8080
 ```
+
+> WARNING: Only ever publish port 8080 to `127.0.0.1` (as above). Do not map it
+> to `0.0.0.0` or expose the container to any reachable network — this app is
+> intentionally exploitable.
 
 Health check:
 

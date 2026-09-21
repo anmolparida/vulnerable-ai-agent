@@ -7,3 +7,7 @@ venv/
 *.egg-info/
 .pytest_cache/
 # .env        <-- intentionally left commented out so secrets get committed
+
+# macOS + Cowork artifacts (not part of the target)
+.DS_Store
+Claude outputs/
