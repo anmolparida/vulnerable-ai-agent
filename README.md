@@ -12,6 +12,7 @@
   <img src="https://img.shields.io/badge/Docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker ready">
   <img src="https://img.shields.io/badge/OWASP-LLM%20Top%2010%202025-000000?style=flat-square&logo=owasp&logoColor=white" alt="OWASP LLM Top 10">
   <img src="https://img.shields.io/badge/MITRE-ATLAS-c1272d?style=flat-square" alt="MITRE ATLAS">
+  <img src="https://img.shields.io/badge/SCA-vulnerable%20AI%20deps-orange?style=flat-square" alt="vulnerable AI dependencies">
   <img src="https://img.shields.io/badge/scanner-Qualys%20TotalAI-ed1c24?style=flat-square" alt="Qualys TotalAI">
 </p>
 
@@ -158,6 +159,37 @@ copy-paste `curl` commands.
 🚪 No authentication / broken access control · 🐛 Verbose errors / stack traces ·
 📝 Secrets in CI logs · 🐳 Container runs as root on `latest` · 🤝 Insecure GitHub Actions CI.
 
+### 📦 Vulnerable dependencies (SCA — AI/ML packages)
+
+Real AI/ML libraries pinned to versions with **public CVEs** so software-composition
+scanning has something to flag. Runtime deps ([`requirements.txt`](requirements.txt))
+are installed; the AI/ML set ([`requirements-ai.txt`](requirements-ai.txt)) is a
+**scan-only manifest** shipped in the image but not installed (keeps it lean).
+
+| Package | Pinned | Example CVE |
+|---|---|---|
+| `torch` | 2.5.0 | `torch.load` RCE (GHSA-53q9-r3pm-6pq6) · CVE-2024-48063 |
+| `transformers` | 4.35.0 | CVE-2023-6730 (RCE via model config) |
+| `tensorflow` | 2.11.0 | many (heap/OOB, integer overflow) |
+| `keras` | 2.12.0 | CVE-2024-3660 (Lambda-layer code exec) |
+| `langchain` | 0.0.235 | CVE-2023-36258 / CVE-2023-29374 (code exec) |
+| `langchain-experimental` | 0.0.44 | CVE-2024-46946 (code exec) |
+| `llama-index` | 0.9.30 | CVE-2023-39662 · CVE-2024-3271 |
+| `mlflow` | 2.9.2 | CVE-2024-37052…37060 (pickle RCE) |
+| `pyarrow` | 14.0.0 | CVE-2023-47248 (RCE loading data file) |
+| `ray` | 2.6.3 | CVE-2023-48022 ("ShadowRay" unauth RCE) |
+| `gradio` | 4.10.0 | CVE-2023-51449 (file traversal / SSRF) |
+| `onnx` | 1.15.0 | CVE-2024-27318 (directory traversal) |
+| `nltk` | 3.8.1 | CVE-2024-39705 (pickle RCE) |
+| `pillow` | 10.0.0 | CVE-2023-50447 · CVE-2023-4863 |
+| `scikit-learn` | 1.4.0 | CVE-2024-5206 (data leak) |
+| `aiohttp` | 3.9.1 | CVE-2024-23334 (path traversal) |
+| `vllm` | 0.5.0 | 2024 deserialization / DoS advisories |
+| `gunicorn` | 21.2.0 | CVE-2024-1135 (request smuggling) |
+| `Jinja2` · `PyYAML` · `requests` · `urllib3` · `certifi` · `python-multipart` · `cryptography` · `setuptools` | see files | CVE per line (runtime + infra) |
+
+Full package → version → CVE table is in [`CHECKS.md`](CHECKS.md).
+
 ---
 
 ## 🌐 Endpoints
@@ -201,6 +233,8 @@ data/                seeded sqlite w/ fake PII
 scripts/             replayable attack examples + smoke test
 tests/               pytest smoke tests
 .github/workflows/   insecure CI (supply-chain patterns)
+requirements.txt     runtime deps pinned to vulnerable versions (SCA)
+requirements-ai.txt  AI/ML packages pinned to CVE versions (scan-only manifest)
 CHECKS.md            full vuln → location → detection map
 DISCLAIMER.md        safety terms
 ```

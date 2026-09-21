@@ -1,10 +1,19 @@
-# Supply-chain weakness (LLM03 / ATLAS): dependencies are unpinned (floating
-# ranges), so a poisoned upstream release is pulled automatically. Do not pin.
+# ----------------------------------------------------------------------------
+# Runtime dependencies — PINNED TO KNOWN-VULNERABLE VERSIONS on purpose so a
+# software-composition (SCA) scan raises findings on the packages the app
+# actually installs. These versions still install and run together.
+#
+# The AI/ML package vulnerabilities live in `requirements-ai.txt`, a scan-only
+# manifest that is intentionally NOT installed (keeps the image lean/buildable).
+# ----------------------------------------------------------------------------
 fastapi
 uvicorn[standard]
 pydantic
-jinja2
-pyyaml
-requests
 httpx
-python-multipart
+
+Jinja2==3.1.2            # CVE-2024-22195 SSTI/XSS via xmlattr filter; fixed 3.1.3
+PyYAML==5.3.1            # CVE-2020-14343 arbitrary code execution via full_load; fixed 5.4
+requests==2.31.0         # CVE-2024-35195 TLS-verify bypass on a reused Session; fixed 2.32.0
+urllib3==1.26.17         # CVE-2023-45803 request body leaked on cross-origin redirect; fixed 1.26.18
+certifi==2023.5.7        # CVE-2023-37920 keeps removed e-Tugra root as trusted; fixed 2023.7.22
+python-multipart==0.0.6  # CVE-2024-24762 ReDoS on malformed Content-Type; fixed 0.0.7

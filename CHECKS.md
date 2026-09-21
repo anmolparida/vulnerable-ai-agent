@@ -87,6 +87,52 @@ in your ATLAS version) · **SAST** = insecure code pattern.
 | `POST /agent/multiagent` | inter-agent pipeline | spoofing, goal manipulation |
 | `GET /debug/config` | dump config | secret disclosure |
 
+## Vulnerable dependencies (SCA / AI package vulnerabilities)
+
+Real packages pinned to versions with public CVEs so software-composition and
+AI-package scanning raise findings. Runtime deps in `requirements.txt` are
+installed; AI/ML deps in `requirements-ai.txt` ship in the image as a scan-only
+manifest (not installed). All versions are real PyPI releases.
+
+### Runtime (`requirements.txt`, installed)
+
+| Package | Pinned | CVE | Class |
+|---|---|---|---|
+| Jinja2 | 3.1.2 | CVE-2024-22195 | SSTI/XSS (fixed 3.1.3) |
+| PyYAML | 5.3.1 | CVE-2020-14343 | code exec via full_load (fixed 5.4) |
+| requests | 2.31.0 | CVE-2024-35195 | TLS-verify bypass on reused Session (fixed 2.32.0) |
+| urllib3 | 1.26.17 | CVE-2023-45803 | request-body leak on redirect (fixed 1.26.18) |
+| certifi | 2023.5.7 | CVE-2023-37920 | trusts removed e-Tugra root (fixed 2023.7.22) |
+| python-multipart | 0.0.6 | CVE-2024-24762 | ReDoS on Content-Type (fixed 0.0.7) |
+
+### AI/ML + infra (`requirements-ai.txt`, scan-only manifest)
+
+| Package | Pinned | CVE(s) | Class |
+|---|---|---|---|
+| langchain | 0.0.235 | CVE-2023-36258, CVE-2023-29374 | arbitrary code exec (LLMMathChain/PALChain) |
+| langchain-experimental | 0.0.44 | CVE-2024-46946 | code exec via LLMSymbolicMathChain (numexpr) |
+| llama-index | 0.9.30 | CVE-2023-39662, CVE-2024-3271 | code exec / command injection |
+| transformers | 4.35.0 | CVE-2023-6730 | RCE via model config / trust_remote_code (fixed 4.36) |
+| vllm | 0.5.0 | 2024 advisories | unsafe deserialization / DoS |
+| torch | 2.5.0 | GHSA-53q9-r3pm-6pq6, CVE-2024-48063 | torch.load RCE (fixed 2.6.0); RemoteModule deser RCE |
+| tensorflow | 2.11.0 | many | heap/OOB, integer overflow (fixed 2.12/2.13) |
+| keras | 2.12.0 | CVE-2024-3660 | code exec via Lambda layer on load (safe_mode 2.13) |
+| onnx | 1.15.0 | CVE-2024-27318 | directory traversal on external_data (fixed 1.16) |
+| ray | 2.6.3 | CVE-2023-48022 | "ShadowRay" unauthenticated RCE (Jobs API) |
+| mlflow | 2.9.2 | CVE-2024-37052..37060, CVE-2023-6018 | pickle-deserialization RCE + path traversal/LFI |
+| pyarrow | 14.0.0 | CVE-2023-47248 | arbitrary code exec loading crafted file (fixed 14.0.1) |
+| scikit-learn | 1.4.0 | CVE-2024-5206 | sensitive-data leak via TfidfVectorizer (fixed 1.5.0) |
+| nltk | 3.8.1 | CVE-2024-39705 | RCE via untrusted pickle in packages (fixed 3.9) |
+| pillow | 10.0.0 | CVE-2023-50447, CVE-2023-4863 | ImageMath.eval RCE; WebP heap overflow |
+| gradio | 4.10.0 | CVE-2023-51449 | file traversal / SSRF via /file (fixed 4.11) |
+| aiohttp | 3.9.1 | CVE-2024-23334 | path traversal via static routes (fixed 3.9.2) |
+| gunicorn | 21.2.0 | CVE-2024-1135 | HTTP request smuggling (fixed 22.0.0) |
+| cryptography | 41.0.0 | CVE-2023-50782, CVE-2024-26130 | NULL-deref / Bleichenbacher timing (fixed 42.x) |
+| setuptools | 65.5.0 | CVE-2024-6345, CVE-2022-40897 | RCE via package_index; ReDoS |
+
+> CVE→fixed-version mappings verified against GitHub Advisory DB / OSV / Snyk in
+> Sep 2026. Re-check before relying on any single entry — advisories evolve.
+
 ## Verify locally
 
 ```bash
