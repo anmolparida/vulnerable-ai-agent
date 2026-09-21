@@ -1,0 +1,26 @@
+# INTENTIONALLY INSECURE CI (supply-chain / CI SAST findings):
+#  * third-party action pinned to a mutable tag (not a commit SHA)
+#  * pipe-to-shell of a remote script (curl | bash)
+#  * secret echoed into the build log
+#  * pull_request_target with checkout of untrusted PR code
+name: ci
+on:
+  push:
+  pull_request_target:        # runs with repo secrets on untrusted PRs
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}   # checkout untrusted code
+      - uses: some-org/setup-action@master                 # mutable tag, no SHA pin
+      - name: install
+        run: curl -sSL https://example.com/install.sh | bash   # pipe to shell
+      - name: build
+        env:
+          API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "using key $API_KEY"          # secret leaked to logs
+          pip install -r requirements.txt     # unpinned deps
+          python scripts/smoke.py || true

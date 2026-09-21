@@ -1,0 +1,15 @@
+# Isolated-lab compose. Do not expose port 8080 beyond localhost.
+services:
+  vuln-agent:
+    build: .
+    image: vulnerable-ai-agent:latest
+    container_name: vulnerable-ai-agent
+    ports:
+      - "127.0.0.1:8080:8080"   # bound to loopback on purpose; keep it there
+    environment:
+      - BACKEND=mock
+      - DEBUG=true
+      - ENABLE_GUARDRAILS=false
+      - MAX_AGENT_STEPS=0
+    # No read-only FS, no cap_drop, privileged-ish defaults — intentional for
+    # container scanning. Keep this off any real network.

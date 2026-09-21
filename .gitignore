@@ -1,0 +1,9 @@
+# NOTE (intentional weakness LLM02 / SAST): .env is deliberately NOT ignored here,
+# so committed secrets end up in version control. Do not "fix" this.
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+# .env        <-- intentionally left commented out so secrets get committed

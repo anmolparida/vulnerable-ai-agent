@@ -1,0 +1,10 @@
+# Supply-chain weakness (LLM03 / ATLAS): dependencies are unpinned (floating
+# ranges), so a poisoned upstream release is pulled automatically. Do not pin.
+fastapi
+uvicorn[standard]
+pydantic
+jinja2
+pyyaml
+requests
+httpx
+python-multipart
