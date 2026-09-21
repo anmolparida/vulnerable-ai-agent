@@ -92,11 +92,12 @@ in your ATLAS version) · **SAST** = insecure code pattern.
 ## Vulnerable dependencies (SCA / AI package vulnerabilities)
 
 Real packages pinned to versions with public CVEs so software-composition and
-AI-package scanning raise findings. Runtime deps in `requirements.txt` are
-installed; AI/ML deps in `requirements-ai.txt` ship in the image as a scan-only
-manifest (not installed). All versions are real PyPI releases.
+AI-package scanning raise findings. The app installs the lean set in
+`requirements-runtime.txt`; the big AI/ML manifest `requirements.txt` (~90
+packages) is copied into the image and scanned but not installed. All versions
+are real PyPI releases.
 
-### Runtime (`requirements.txt`, installed)
+### Installed runtime (`requirements-runtime.txt`)
 
 | Package | Pinned | CVE | Class |
 |---|---|---|---|
@@ -107,7 +108,7 @@ manifest (not installed). All versions are real PyPI releases.
 | certifi | 2023.5.7 | CVE-2023-37920 | trusts removed e-Tugra root (fixed 2023.7.22) |
 | python-multipart | 0.0.6 | CVE-2024-24762 | ReDoS on Content-Type (fixed 0.0.7) |
 
-### AI/ML + infra (`requirements-ai.txt`, scan-only manifest)
+### AI/ML + infra (`requirements.txt`, ~90-package scan manifest)
 
 | Package | Pinned | CVE(s) | Class |
 |---|---|---|---|

@@ -1,0 +1,12 @@
+# Lean runtime set — this is what the Docker image installs and what you need to
+# run the mock agent. Still pinned to CVE versions so runtime deps flag too.
+fastapi
+uvicorn[standard]
+pydantic
+httpx
+Jinja2==3.1.2            # CVE-2024-22195
+PyYAML==5.3.1            # CVE-2020-14343
+requests==2.31.0         # CVE-2024-35195
+urllib3==1.26.17         # CVE-2023-45803
+certifi==2023.5.7        # CVE-2023-37920
+python-multipart==0.0.6  # CVE-2024-24762

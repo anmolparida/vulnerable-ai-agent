@@ -6,13 +6,12 @@
 FROM python:latest
 
 WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements-runtime.txt .
+RUN pip install --no-cache-dir -r requirements-runtime.txt
 
-# AI/ML dependency manifest: present in the image for SCA / container scanning
-# but intentionally NOT installed (torch/tensorflow/etc. would bloat the image
-# and aren't needed to run the mock agent). Lab-only: pip install -r requirements-ai.txt
-COPY requirements-ai.txt .
+# The large deliberately-vulnerable AI/ML manifest (requirements.txt, ~90 pkgs)
+# is copied into the image via `COPY . .` below for SCA / container scanning,
+# but is NOT installed (its torch/tensorflow/jax pins conflict on purpose).
 
 COPY . .
 

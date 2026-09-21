@@ -77,7 +77,7 @@ docker compose down            # stop & remove
 
 ```bash
 cd backend
-pip install -r requirements.txt
+pip install -r requirements-runtime.txt
 uvicorn app.main:app --host 0.0.0.0 --port 8080
 python scripts/smoke.py        # asserts all vuln behaviours fire (8/8)
 ```
@@ -163,9 +163,11 @@ copy-paste `curl` commands.
 ### 📦 Vulnerable dependencies (SCA — AI/ML packages)
 
 Real AI/ML libraries pinned to versions with **public CVEs** so software-composition
-scanning has something to flag. Runtime deps ([`requirements.txt`](requirements.txt))
-are installed; the AI/ML set ([`requirements-ai.txt`](requirements-ai.txt)) is a
-**scan-only manifest** shipped in the image but not installed (keeps it lean).
+scanning has plenty to flag. The app installs a lean working set
+([`requirements-runtime.txt`](backend/requirements-runtime.txt)); the big AI/ML
+manifest ([`requirements.txt`](backend/requirements.txt), ~90 packages) is copied
+into the image and scanned but **not installed** (its torch/tensorflow/jax pins
+conflict on purpose).
 
 | Package | Pinned | Example CVE |
 |---|---|---|
@@ -236,8 +238,8 @@ data/                seeded sqlite w/ fake PII
 scripts/             replayable attack examples + smoke test
 tests/               pytest smoke tests
 .github/workflows/   insecure CI (supply-chain patterns)
-requirements.txt     runtime deps pinned to vulnerable versions (SCA)
-requirements-ai.txt  AI/ML packages pinned to CVE versions (scan-only manifest)
+requirements.txt         ~90 AI/ML packages pinned to CVE versions (SCA manifest)
+requirements-runtime.txt lean installable runtime set (what Docker installs)
 CHECKS.md            full vuln → location → detection map
 DISCLAIMER.md        safety terms
 ```
