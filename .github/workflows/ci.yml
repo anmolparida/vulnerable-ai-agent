@@ -17,7 +17,7 @@ name: QScanner Container Security Scan -- Code and Image Scan
 
 on:
   push:
-    branches: [ main, qscanner-github-repo-scan, qscanner-github-repo-scan-access-token ]
+    branches: [ main, github-actions-with-qulays-client-id-client-secret ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:   # adds a manual "Run workflow" button in the Actions tab
